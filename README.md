@@ -41,3 +41,5 @@ Authentication is a demo stand-in: the caller's id arrives in the `x-user-id` he
 ---
 
 *CBRM by **Bezael Pérez · Dominicode**.*
+
+MIT licensed. Reuse it for your team or workshop; a mention is welcome.
