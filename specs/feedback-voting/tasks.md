@@ -26,12 +26,12 @@
 
 ### Feature: The system requires the user to be signed in before changing a vote.
 
-- [ ] TASK-30 — 🔴 **Test: `PUT`/`DELETE /feedback/:id/vote` return 401 for a visitor and change nothing** — Criterion: `spec.md §3 → "The system requires the user to be signed in before changing a vote."` Files: `test/votes.api.test.ts`. Verify: `npx vitest run test/votes.api.test.ts`. Done when: it fails because the routes are not registered (404). Evidence: —
+- [x] TASK-30 — 🔴 **Test: `PUT`/`DELETE /feedback/:id/vote` return 401 for a visitor and change nothing** — Criterion: `spec.md §3 → "The system requires the user to be signed in before changing a vote."` Files: `test/votes.api.test.ts`. Verify: `npx vitest run test/votes.api.test.ts`. Done when: it fails because the routes are not registered (404). Evidence: Red as expected: `expected 404 to be 401` (route not registered).
 
 ### Feature: vote and unvote over HTTP
 
-- [ ] TASK-31 — 🔴 **Test: `PUT` returns `{ voted: true, count }` and is idempotent; `DELETE` returns `{ voted: false, count }`; unknown item → 404** — Criterion: `spec.md §3` vote and unvote, `§4` Vote and Unvote flows. Files: `test/votes.api.test.ts`. Verify: `npx vitest run test/votes.api.test.ts`. Done when: it fails because the routes are missing. Evidence: —
-- [ ] TASK-32 — 🟢 **Implement `PUT` and `DELETE /feedback/:id/vote`** — Criterion: TASK-30 + TASK-31. Files: `src/app.ts`. Verify: `npx vitest run test/votes.api.test.ts && npm test`. Done when: both exit 0. Evidence: —
+- [x] TASK-31 — 🔴 **Test: `PUT` returns `{ voted: true, count }` and is idempotent; `DELETE` returns `{ voted: false, count }`; unknown item → 404** — Criterion: `spec.md §3` vote and unvote, `§4` Vote and Unvote flows. Files: `test/votes.api.test.ts`. Verify: `npx vitest run test/votes.api.test.ts`. Done when: it fails because the routes are missing. Evidence: Red as expected: 3 failed with `expected 404 to be 200` / Fastify default 404 body instead of `{ error: 'feedback item not found' }`.
+- [x] TASK-32 — 🟢 **Implement `PUT` and `DELETE /feedback/:id/vote`** — Criterion: TASK-30 + TASK-31. Files: `src/app.ts`. Verify: `npx vitest run test/votes.api.test.ts && npm test`. Done when: both exit 0. Evidence: `votes.api.test.ts` 4 passed; `npm test` 11 passed; typecheck and lint clean.
 
 ### Feature: The system shows the current vote count of every item.
 

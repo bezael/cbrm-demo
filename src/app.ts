@@ -1,4 +1,4 @@
-import Fastify, { type FastifyRequest } from 'fastify';
+import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify';
 import { FeedbackStore } from './store.js';
 
 // Demo stand-in for authentication: the caller's id arrives in a header.
@@ -22,6 +22,21 @@ export function buildApp(store = new FeedbackStore()) {
 
     return reply.code(201).send(store.create(title, userId));
   });
+
+  const changeVote = (voted: boolean) =>
+    async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
+      const userId = userIdOf(request);
+      if (!userId) return reply.code(401).send({ error: 'sign in required' });
+
+      const { id } = request.params;
+      const count = voted ? store.vote(id, userId) : store.unvote(id, userId);
+      if (count === undefined) return reply.code(404).send({ error: 'feedback item not found' });
+
+      return { voted, count };
+    };
+
+  app.put('/feedback/:id/vote', changeVote(true));
+  app.delete('/feedback/:id/vote', changeVote(false));
 
   return app;
 }
