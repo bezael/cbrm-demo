@@ -41,7 +41,10 @@ export class FeedbackStore {
     return this.items.get(id);
   }
 
-  list(): FeedbackItem[] {
-    return [...this.items.values()];
+  list(): Array<FeedbackItem & { votes: number }> {
+    return [...this.items.values()].map((item) => ({
+      ...item,
+      votes: this.votes.get(item.id)?.size ?? 0,
+    }));
   }
 }

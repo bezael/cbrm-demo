@@ -35,8 +35,8 @@
 
 ### Feature: The system shows the current vote count of every item.
 
-- [ ] TASK-40 — 🔴 **Test: `GET /feedback` includes `votes` on every item** — Criterion: `spec.md §3 → "The system shows the current vote count of every item."` Files: `test/votes.api.test.ts`. Verify: `npx vitest run test/votes.api.test.ts`. Done when: it fails because items have no `votes`. Evidence: —
-- [ ] TASK-41 — 🟢 **Include `votes` in the list** — Criterion: same. Files: `src/store.ts`, `src/app.ts`. Verify: `npx vitest run test/votes.api.test.ts && npm test`. Done when: both exit 0. Evidence: —
+- [x] TASK-40 — 🔴 **Test: `GET /feedback` includes `votes` on every item** — Criterion: `spec.md §3 → "The system shows the current vote count of every item."` Files: `test/votes.api.test.ts`. Verify: `npx vitest run test/votes.api.test.ts`. Done when: it fails because items have no `votes`. Evidence: Red as expected: 1 failed, the list items have no `votes` field.
+- [x] TASK-41 — 🟢 **Include `votes` in the list** — Criterion: same. Files: `src/store.ts`, `src/app.ts`. Verify: `npx vitest run test/votes.api.test.ts && npm test`. Done when: both exit 0. Evidence: `votes.api.test.ts` 5 passed; `npm test` 12 passed; typecheck and lint clean. Only `src/store.ts` changed: the route already returns `store.list()`, so `src/app.ts` needed no edit.
 
 ## Phase N — Flows and NFRs
 

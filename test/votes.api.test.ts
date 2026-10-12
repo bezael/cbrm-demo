@@ -55,4 +55,18 @@ describe('voting over HTTP', () => {
       expect(res.json()).toEqual({ error: 'feedback item not found' });
     }
   });
+
+  test('GET /feedback shows the vote count of every item', async () => {
+    const { app, store, item } = setup();
+    const other = store.create('Export to CSV', 'bob');
+    store.vote(item.id, 'bob');
+    store.vote(item.id, 'carla');
+
+    const res = await app.inject({ url: '/feedback' });
+
+    expect(res.json()).toEqual([
+      expect.objectContaining({ id: item.id, votes: 2 }),
+      expect.objectContaining({ id: other.id, votes: 0 }),
+    ]);
+  });
 });
