@@ -30,6 +30,13 @@ export class FeedbackStore {
     return voters.size;
   }
 
+  unvote(itemId: string, userId: string): number | undefined {
+    if (!this.items.has(itemId)) return undefined;
+    const voters = this.votes.get(itemId);
+    voters?.delete(userId);
+    return voters?.size ?? 0;
+  }
+
   get(id: string): FeedbackItem | undefined {
     return this.items.get(id);
   }

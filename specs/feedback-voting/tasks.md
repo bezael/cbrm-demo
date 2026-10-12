@@ -19,8 +19,8 @@
 
 ### Feature: The user can remove their vote from a feedback item.
 
-- [ ] TASK-20 — 🔴 **Test: unvote removes only the caller's vote and never goes below zero** — Criterion: `spec.md §3 → "The user can remove their vote from a feedback item."` + §6 Security and Consistency. Files: `test/votes.store.test.ts`. Verify: `npx vitest run test/votes.store.test.ts`. Done when: it fails because `unvote` does not exist. Evidence: —
-- [ ] TASK-21 — 🟢 **Implement `FeedbackStore.unvote`** — Criterion: same. Files: `src/store.ts`. Verify: `npx vitest run test/votes.store.test.ts && npm test`. Done when: both exit 0. Evidence: —
+- [x] TASK-20 — 🔴 **Test: unvote removes only the caller's vote and never goes below zero** — Criterion: `spec.md §3 → "The user can remove their vote from a feedback item."` + §6 Security and Consistency. Files: `test/votes.store.test.ts`. Verify: `npx vitest run test/votes.store.test.ts`. Done when: it fails because `unvote` does not exist. Evidence: Red as expected: 2 failed, `TypeError: store.unvote is not a function`; the 2 vote tests still pass.
+- [x] TASK-21 — 🟢 **Implement `FeedbackStore.unvote`** — Criterion: same. Files: `src/store.ts`. Verify: `npx vitest run test/votes.store.test.ts && npm test`. Done when: both exit 0. Evidence: `votes.store.test.ts` 4 passed; `npm test` 7 passed; typecheck clean.
 
 ## Phase 2 — HTTP
 
