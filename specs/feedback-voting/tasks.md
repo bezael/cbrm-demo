@@ -1,6 +1,6 @@
 # Tasks — Feedback voting
 
-**Status:** In Progress
+**Status:** Completed
 
 > Derived from `spec.md` + `plan.md`. Execute in order: 🔴 → 🟢 → 🔵.
 > `[x]` means Verify was run and Done when was observed. Evidence is recorded on the task.
@@ -72,3 +72,7 @@ Minor: the performance test relied on an implicit warm-up and did not measure th
 **Spec reflow after round 1:** §6 Performance said "constant-time", which no test measures. The verifiable criterion is the 1 s budget; constant time is now stated as a design property of plan §2, not a criterion. No code changed.
 
 **Round 2 — Status: PASS · Alignment: Exact.** Both Important findings closed: the reviewer re-applied both mutants in a scratch copy (M1 → 2 failed, M2 → 1 failed) and added two controls (a visitor DELETE that wipes every vote; unvote deleting another user's vote), both caught. `2f3dbcb` touches no `src/` file. Long loop re-run by the reviewer: `npm ci`, typecheck, lint exit 0; `npm test` 16 passed, 4 of 4 runs. Remaining Minor: about 7x wall-clock headroom on the performance test under CI load (watched in CI, not blocking).
+
+## Final Verification
+
+PASS (2026-10-12, Node 24, Windows). Lane long loop: `npm ci` exit 0 · `npm run typecheck` exit 0 · `npm run lint` exit 0 · `npm test` 4 files, 16 passed. Every earlier task's evidence is re-checked by this full run. No unchecked task, no coverage orphans, Code Review PASS with no blocking findings. Production diff limited to `src/app.ts` and `src/store.ts`; no dependency, workflow or `userIdOf` change. CI on Node 22 runs on the PR.

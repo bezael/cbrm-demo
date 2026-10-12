@@ -18,4 +18,4 @@
 
 | Slug | Vision (1 line) | Status | Key stack | Related specs |
 |------|-----------------|--------|-----------|---------------|
-| `feedback-voting` | Signed-in users vote once per item and can take it back; everyone sees the count | in progress | Fastify + Vitest | — |
+| `feedback-voting` | Signed-in users vote once per item and can take it back; everyone sees the count | completed | Fastify + Vitest | — |
