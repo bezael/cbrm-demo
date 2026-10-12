@@ -40,7 +40,7 @@
 
 ## Phase N — Flows and NFRs
 
-- [x] TASK-90 — 🔗 **§4 flows end to end: vote, unvote without a vote, visitor refused, unknown item** — Criterion: `spec.md §4` (all three flows, happy and error paths). Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: `votes.flows.test.ts`: Vote, Unvote and Visitor flows pass, including 404 and unvote-without-vote; 3 of 3 runs.
+- [x] TASK-90 — 🔗 **§4 flows end to end: vote, unvote without a vote, visitor refused, unknown item** — Criterion: `spec.md §4` (all three flows, happy and error paths). Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: `votes.flows.test.ts`: Vote, Unvote and Visitor flows pass, including the PUT 404 and unvote-without-vote, 3 of 3 runs (the DELETE 404 is in `votes.api.test.ts`). Strengthened by TASK-R1.
 - [x] TASK-95 — 🔗 **NFR performance: 1,000 sequential votes under 1 s** — Criterion: `spec.md §6 Performance`. Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: 1,000 sequential votes in 64–68 ms (limit 1,000 ms), 3 of 3 runs; `npm test` 16 passed; typecheck and lint clean.
 
 Security and consistency NFRs are verified by TASK-20 (only the caller's vote, never negative), TASK-30 (401) and TASK-31 (idempotent). Language: responses reuse `{ error: string }`, checked in TASK-30/31.
@@ -55,3 +55,16 @@ Security and consistency NFRs are verified by TASK-20 (only the caller's vote, n
 | The system requires the user to be signed in before changing a vote. | 401 on `PUT`/`DELETE` | TASK-30, TASK-32 |
 
 Every §4 flow (happy and error paths) is in TASK-90; the measurable §6 NFR is TASK-95. No orphans.
+
+## Code Review
+
+Independent reviewer (did not write the code), against Issue #1, this contract, `AGENTS.md` and the real diff; long loop re-run by the reviewer.
+
+**Round 1 — Status: CHANGES REQUIRED · Alignment: Exact.** Production code matched plan §2/§3 with no tangling and no boundary violations. Two **Important** findings: tests that passed without proving their criterion, each shown with a mutant that kept 16/16 green.
+
+1. `test/votes.api.test.ts:24` checked "nothing changes" with `store.vote()`, which restores a removed vote. Mutant: a visitor's DELETE removes a vote before the 401 → still green. The Visitor flow test never sent DELETE.
+2. "No vote is created" for an unknown item was only checked through the return value. Mutant: record the vote, then return `undefined` → still green. Ids are sequential, so a phantom vote on "2" would land on the next item.
+
+Minor: the performance test relied on an implicit warm-up; the HTTP DELETE test did not show which vote remained; TASK-90 evidence overstated its 404 coverage.
+
+- [x] TASK-R1 — 🔴→🟢 **Make the review's two criteria provable** — Criterion: `spec.md §4` Visitor (DELETE) and Vote error "no vote is created"; `§6` Security. Files: `test/votes.api.test.ts`, `test/votes.flows.test.ts` (tests only; no production change). Verify: `npm test`, then each reviewer mutant applied to `src/` and reverted. Done when: suite green on the real code and red on each mutant. Evidence: real code 16 passed. Mutant 1 (visitor DELETE removes a vote) → 2 failed (`a visitor cannot vote or unvote…`, `Visitor: refused with 401…`). Mutant 2 (phantom vote) → 1 failed (`Vote: … an unknown item is 404 and creates nothing`). Also: DELETE 401 body asserted, the remaining vote shown to be carla's, explicit untimed warm-up in the performance test.

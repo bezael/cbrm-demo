@@ -21,7 +21,10 @@ describe('voting over HTTP', () => {
     expect(put.statusCode).toBe(401);
     expect(del.statusCode).toBe(401);
     expect(put.json()).toEqual({ error: 'sign in required' });
-    expect(store.vote(item.id, 'bob')).toBe(1);
+    expect(del.json()).toEqual({ error: 'sign in required' });
+    // Read the count without changing it: an idempotent vote() here would
+    // restore a vote the visitor's DELETE removed and hide the bug.
+    expect(store.list()[0]?.votes).toBe(1);
   });
 
   test('PUT votes once and is idempotent', async () => {
@@ -45,6 +48,10 @@ describe('voting over HTTP', () => {
 
     expect(res.statusCode).toBe(200);
     expect(res.json()).toEqual({ voted: false, count: 1 });
+
+    // The vote left is carla's: removing it brings the count to zero.
+    const carla = await app.inject({ method: 'DELETE', url: `/feedback/${item.id}/vote`, headers: as('carla') });
+    expect(carla.json()).toEqual({ voted: false, count: 0 });
   });
 
   test('an unknown item returns 404 for both verbs', async () => {

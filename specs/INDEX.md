@@ -9,6 +9,9 @@
 | Identity | `userIdOf(request)` reads `x-user-id` | Demo stand-in for auth; one place to replace later | baseline |
 | Storage | In-memory `FeedbackStore` | The demo is about the method, not persistence | baseline |
 | Test runner | Vitest 3.2, HTTP tested with `app.inject` | Fast, no ports | baseline |
+| "Nothing changes" tests | Read state with a call that cannot change it (`list()`, `GET`), never with an idempotent write | An idempotent `vote()` probe restored a removed vote and hid a mutant | `feedback-voting` (review) |
+| "Nothing created for unknown id" tests | Hit the id before it exists, then create it and assert it starts empty | Ids are sequential in `FeedbackStore`; a return-value check missed a phantom vote | `feedback-voting` (review) |
+| Wall-clock NFR tests | Exclude the cold first `app.inject` with an explicit, untimed warm-up | The cold start (~1.7 s in a full run) is not what the NFR measures | `feedback-voting` (review) |
 
 ## Specs
 
