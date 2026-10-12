@@ -1,6 +1,6 @@
 # Tasks — Feedback voting
 
-**Status:** Not Started
+**Status:** In Progress
 
 > Derived from `spec.md` + `plan.md`. Execute in order: 🔴 → 🟢 → 🔵.
 > `[x]` means Verify was run and Done when was observed. Evidence is recorded on the task.
@@ -8,14 +8,14 @@
 ## Phase 0 — Runner
 
 - [x] TASK-00 — ⚙️ **Runner detected:** Vitest 3.2.7 in `package.json` devDependencies; `test/feedback.test.ts` exists (Route A).
-- [ ] TASK-01 — ⚙️ **Confirm the runner executes** — Criterion: Phase 0 gate. Files: none. Verify: `npm test`. Done when: Vitest runs and exits 0. Evidence: —
+- [x] TASK-01 — ⚙️ **Confirm the runner executes** — Criterion: Phase 0 gate. Files: none. Verify: `npm test`. Done when: Vitest runs and exits 0. Evidence: `npm test` → 1 file, 3 passed (2026-10-12).
 
 ## Phase 1 — Store
 
 ### Feature: The user can vote for a feedback item once.
 
-- [ ] TASK-10 — 🔴 **Test: a user's second vote does not change the count** — Criterion: `spec.md §3 → "The user can vote for a feedback item once."` Files: `test/votes.store.test.ts`. Verify: `npx vitest run test/votes.store.test.ts`. Done when: it fails because `vote` does not exist, not for config or import reasons. Evidence: —
-- [ ] TASK-11 — 🟢 **Implement `FeedbackStore.vote`** — Criterion: same. Files: `src/store.ts`. Verify: `npx vitest run test/votes.store.test.ts && npm test`. Done when: both exit 0. Evidence: —
+- [x] TASK-10 — 🔴 **Test: a user's second vote does not change the count** — Criterion: `spec.md §3 → "The user can vote for a feedback item once."` Files: `test/votes.store.test.ts`. Verify: `npx vitest run test/votes.store.test.ts`. Done when: it fails because `vote` does not exist, not for config or import reasons. Evidence: Red as expected: 2 failed, `TypeError: store.vote is not a function`.
+- [x] TASK-11 — 🟢 **Implement `FeedbackStore.vote`** — Criterion: same. Files: `src/store.ts`. Verify: `npx vitest run test/votes.store.test.ts && npm test`. Done when: both exit 0. Evidence: `votes.store.test.ts` 2 passed; `npm test` 5 passed; typecheck clean.
 
 ### Feature: The user can remove their vote from a feedback item.
 
