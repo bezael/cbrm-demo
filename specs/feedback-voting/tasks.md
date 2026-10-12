@@ -40,8 +40,8 @@
 
 ## Phase N — Flows and NFRs
 
-- [ ] TASK-90 — 🔗 **§4 flows end to end: vote, unvote without a vote, visitor refused, unknown item** — Criterion: `spec.md §4` (all three flows, happy and error paths). Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: —
-- [ ] TASK-95 — 🔗 **NFR performance: 1,000 sequential votes under 1 s** — Criterion: `spec.md §6 Performance`. Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: —
+- [x] TASK-90 — 🔗 **§4 flows end to end: vote, unvote without a vote, visitor refused, unknown item** — Criterion: `spec.md §4` (all three flows, happy and error paths). Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: `votes.flows.test.ts`: Vote, Unvote and Visitor flows pass, including 404 and unvote-without-vote; 3 of 3 runs.
+- [x] TASK-95 — 🔗 **NFR performance: 1,000 sequential votes under 1 s** — Criterion: `spec.md §6 Performance`. Files: `test/votes.flows.test.ts`. Verify: `npx vitest run test/votes.flows.test.ts`. Done when: exits 0. Evidence: 1,000 sequential votes in 64–68 ms (limit 1,000 ms), 3 of 3 runs; `npm test` 16 passed; typecheck and lint clean.
 
 Security and consistency NFRs are verified by TASK-20 (only the caller's vote, never negative), TASK-30 (401) and TASK-31 (idempotent). Language: responses reuse `{ error: string }`, checked in TASK-30/31.
 
