@@ -52,9 +52,9 @@ Security and consistency NFRs are verified by TASK-20 (only the caller's vote, n
 | The user can vote for a feedback item once. | `FeedbackStore.vote`, `PUT /feedback/:id/vote` | TASK-10, TASK-11, TASK-31, TASK-32 |
 | The user can remove their vote from a feedback item. | `FeedbackStore.unvote`, `DELETE /feedback/:id/vote` | TASK-20, TASK-21, TASK-31, TASK-32 |
 | The system shows the current vote count of every item. | `GET /feedback` with `votes` | TASK-40, TASK-41 |
-| The system requires the user to be signed in before changing a vote. | 401 on `PUT`/`DELETE` | TASK-30, TASK-32 |
+| The system requires the user to be signed in before changing a vote. | 401 on `PUT`/`DELETE` | TASK-30, TASK-32, TASK-R1 |
 
-Every §4 flow (happy and error paths) is in TASK-90; the measurable §6 NFR is TASK-95. No orphans.
+Every §4 flow (happy and error paths) is in TASK-90, strengthened by TASK-R1; the measurable §6 NFR is TASK-95. No orphans.
 
 ## Code Review
 
@@ -65,6 +65,10 @@ Independent reviewer (did not write the code), against Issue #1, this contract, 
 1. `test/votes.api.test.ts:24` checked "nothing changes" with `store.vote()`, which restores a removed vote. Mutant: a visitor's DELETE removes a vote before the 401 → still green. The Visitor flow test never sent DELETE.
 2. "No vote is created" for an unknown item was only checked through the return value. Mutant: record the vote, then return `undefined` → still green. Ids are sequential, so a phantom vote on "2" would land on the next item.
 
-Minor: the performance test relied on an implicit warm-up; the HTTP DELETE test did not show which vote remained; TASK-90 evidence overstated its 404 coverage.
+Minor: the performance test relied on an implicit warm-up and did not measure the spec's "constant-time" wording; the HTTP DELETE test did not show which vote remained and did not assert the DELETE 401 body; TASK-90 evidence overstated its 404 coverage. TASK-30 and TASK-31's Red/Green evidence was real, but it overclaimed: those tests did not prove "nothing changes" or "no vote is created".
 
 - [x] TASK-R1 — 🔴→🟢 **Make the review's two criteria provable** — Criterion: `spec.md §4` Visitor (DELETE) and Vote error "no vote is created"; `§6` Security. Files: `test/votes.api.test.ts`, `test/votes.flows.test.ts` (tests only; no production change). Verify: `npm test`, then each reviewer mutant applied to `src/` and reverted. Done when: suite green on the real code and red on each mutant. Evidence: real code 16 passed. Mutant 1 (visitor DELETE removes a vote) → 2 failed (`a visitor cannot vote or unvote…`, `Visitor: refused with 401…`). Mutant 2 (phantom vote) → 1 failed (`Vote: … an unknown item is 404 and creates nothing`). Also: DELETE 401 body asserted, the remaining vote shown to be carla's, explicit untimed warm-up in the performance test.
+
+**Spec reflow after round 1:** §6 Performance said "constant-time", which no test measures. The verifiable criterion is the 1 s budget; constant time is now stated as a design property of plan §2, not a criterion. No code changed.
+
+**Round 2 — Status: PASS · Alignment: Exact.** Both Important findings closed: the reviewer re-applied both mutants in a scratch copy (M1 → 2 failed, M2 → 1 failed) and added two controls (a visitor DELETE that wipes every vote; unvote deleting another user's vote), both caught. `2f3dbcb` touches no `src/` file. Long loop re-run by the reviewer: `npm ci`, typecheck, lint exit 0; `npm test` 16 passed, 4 of 4 runs. Remaining Minor: about 7x wall-clock headroom on the performance test under CI load (watched in CI, not blocking).

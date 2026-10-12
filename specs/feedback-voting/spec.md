@@ -56,7 +56,7 @@ Extend the existing stack (`AGENTS.md` → Lane): Fastify 5 routes in `src/app.t
 
 ## SECTION 6 — Non-functional Requirements
 
-- **Performance:** vote and unvote are constant-time on the in-memory store; 1,000 sequential votes through `app.inject` finish in under 1 s.
+- **Performance:** 1,000 sequential votes through `app.inject` finish in under 1 s, excluding the cold first request. (Vote and unvote are `Set` operations by design, plan §2; that is not a separately measured criterion.)
 - **Security:** only a signed-in user changes votes, and only their own; one user's unvote never removes another user's vote.
 - **Consistency:** repeated votes and unvotes are idempotent; a count is never negative.
 - **Scalability:** single process, in-memory, as the rest of the demo. Out of scope beyond that.
