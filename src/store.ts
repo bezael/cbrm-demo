@@ -7,6 +7,8 @@ export interface FeedbackItem {
 
 export class FeedbackStore {
   private items = new Map<string, FeedbackItem>();
+  // One Set per item: a user votes at most once, and the count is its size.
+  private votes = new Map<string, Set<string>>();
   private nextId = 1;
 
   create(title: string, authorId: string): FeedbackItem {
@@ -20,11 +22,29 @@ export class FeedbackStore {
     return item;
   }
 
+  vote(itemId: string, userId: string): number | undefined {
+    if (!this.items.has(itemId)) return undefined;
+    const voters = this.votes.get(itemId) ?? new Set<string>();
+    voters.add(userId);
+    this.votes.set(itemId, voters);
+    return voters.size;
+  }
+
+  unvote(itemId: string, userId: string): number | undefined {
+    if (!this.items.has(itemId)) return undefined;
+    const voters = this.votes.get(itemId);
+    voters?.delete(userId);
+    return voters?.size ?? 0;
+  }
+
   get(id: string): FeedbackItem | undefined {
     return this.items.get(id);
   }
 
-  list(): FeedbackItem[] {
-    return [...this.items.values()];
+  list(): Array<FeedbackItem & { votes: number }> {
+    return [...this.items.values()].map((item) => ({
+      ...item,
+      votes: this.votes.get(item.id)?.size ?? 0,
+    }));
   }
 }
